@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARTIST PORTFOLIO</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Load Lucide Icons CDN for vanilla JS -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Main Container -->
+  <div class="container">
+    
+    <!-- Editorial Header -->
+    <header>
+      <div class="header-inner">
+        <div class="header-left">
+          <h1 class="site-title"><a href="/" class="site-title-link">Muhammad Zeeshan</a></h1>
+          <span class="site-subtitle">Exhibitions &amp; Projects</span>
+          
+          <!-- Navigation Links -->
+          <nav class="site-nav">
+            <a href="/" class="nav-link active">Exhibitions</a>
+            <a href="/contact.html" class="nav-link">Contact Us</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Public Portfolio Content Area -->
+    <main class="portfolio-main-layout">
+      <!-- Top Section: Artist Biography -->
+      <aside class="portfolio-sidebar-column">
+        <div class="bio-container">
+          <p class="bio-text">
+            <strong>Muhammad Zeeshan</strong> (b. 1980, Mirpurkhas, Pakistan) received his BFA in Miniature Painting from the National College of Arts, Lahore in 2003. Zeeshan lives and works in Karachi and is currently teaching at School of Visual &amp; Performing Arts Arts Council &middot; Karachi Pakistan. Zeeshan's artistic direction is heavily influenced by the medium in which he works; however, the motifs he explores are closely tied to the cultural heritage of Pakistan, investigating issues of culture and conflict, asking the viewer to reconsider social norms and the lens through which we perceive others.
+          </p>
+        </div>
+      </aside>
+
+      <!-- Bottom Section: Exhibitions & Shows -->
+      <div id="portfolio-root" class="portfolio-shows-column">
+        <!-- Loading State -->
+        <div class="empty-state" id="loading-state">
+          <p>Loading portfolio exhibitions...</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; Muhammad Zeeshan 2026. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <!-- Full-Screen Interactive Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Exhibition Lightbox">
+    
+    <!-- Lightbox Header -->
+    <div class="lightbox-header">
+      <div class="lightbox-meta" id="lightbox-series-info">SERIES INFO</div>
+      <button class="lightbox-close-btn" id="lightbox-close-btn" aria-label="Close Lightbox">
+        <i data-lucide="x" style="width: 24px; height: 24px;"></i>
+      </button>
+    </div>
+
+    <!-- Lightbox Main Stage -->
+    <div class="lightbox-stage">
+      
+      <!-- Previous Arrow -->
+      <button class="lightbox-nav prev" id="lightbox-prev-btn" aria-label="Previous Image">
+        <i data-lucide="chevron-left" style="width: 28px; height: 28px;"></i>
+      </button>
+
+      <!-- Active Image -->
+      <div class="lightbox-image-wrapper">
+        <img class="lightbox-img" id="lightbox-img" src="" alt="Active Artwork">
+      </div>
+
+      <!-- Next Arrow -->
+      <button class="lightbox-nav next" id="lightbox-next-btn" aria-label="Next Image">
+        <i data-lucide="chevron-right" style="width: 28px; height: 28px;"></i>
+      </button>
+
+    </div>
+
+    <!-- Lightbox Caption & Counters -->
+    <div class="lightbox-footer">
+      <h2 class="lightbox-caption" id="lightbox-image-name">Artwork Title</h2>
+      <div class="lightbox-counter" id="lightbox-counter">1 of 1</div>
+    </div>
+
+  </div>
+
+  <!-- Vanilla Javascript Application Module -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

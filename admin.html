@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>CMS Dashboard - Artist Portfolio</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Load Lucide Icons CDN for vanilla JS -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- 1. GATED SIGN-IN SCREEN (Centered Card, Visible by default if not authenticated) -->
+    <div class="login-container" id="login-container">
+      <h2 class="login-title">Admin Sign In</h2>
+      <p class="login-desc">Enter your credentials to access the CMS</p>
+      
+      <!-- Error Feedback -->
+      <div class="alert alert-danger" id="login-error">Invalid credentials.</div>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-username">Username</label>
+          <input class="form-control" type="text" id="login-username" required placeholder="Enter Username">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input class="form-control" type="password" id="login-password" required placeholder="••••••••">
+        </div>
+        <button class="btn" type="submit" id="login-submit-btn">Sign In</button>
+      </form>
+    </div>
+
+    <!-- 2. ADMIN CMS PANEL (Visible after authenticating successfully) -->
+    <div id="admin-panel" style="display: none;">
+      
+      <!-- Admin Header -->
+      <header class="admin-header">
+        <div>
+          <h1>CMS Dashboard</h1>
+          <p>Logged in as: <span id="admin-user-email" style="color: #ffffff; font-weight: 500;">admin@example.com</span></p>
+        </div>
+        <button class="btn logout-btn btn-secondary" id="logout-btn">
+          <i data-lucide="log-out" style="width: 14px; height: 14px; margin-right: 0.5rem; display: inline-block; vertical-align: middle;"></i>
+          Log Out
+        </button>
+      </header>
+
+      <!-- Main Two-Column Panel -->
+      <div class="admin-dashboard">
+        
+        <!-- COLUMN A: UPLOAD FORM -->
+        <section>
+          <h2 class="admin-panel-title">Upload New Series</h2>
+          <div class="upload-card">
+            
+            <!-- Upload Alert Feedback -->
+            <div class="alert alert-danger" id="upload-error" style="display: none;">Error uploading show details.</div>
+            <div class="alert alert-success" id="upload-success" style="display: none;">Exhibition successfully uploaded.</div>
+
+            <form id="upload-form">
+              
+
+              
+              <!-- Series Name -->
+              <div class="form-group">
+                <label class="form-label" for="show-name">Exhibition Title</label>
+                <input class="form-control" type="text" id="show-name" required placeholder="e.g. Transient Shadows">
+              </div>
+
+              <!-- Exhibition Year -->
+              <div class="form-group">
+                <label class="form-label" for="show-year">Exhibition Year</label>
+                <input class="form-control" type="number" id="show-year" required min="1800" max="2100" placeholder="e.g. 2026">
+              </div>
+
+              <!-- Exhibition Type (Solo / Group) -->
+              <div class="form-group">
+                <label class="form-label">Exhibition Type</label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="show-type" value="solo" checked> Solo Show
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="show-type" value="group"> Group Show
+                  </label>
+                </div>
+              </div>
+
+              <!-- Image File / Folder Picker -->
+              <div class="form-group">
+                <label class="form-label">Upload Images or Folder</label>
+                <div class="file-drop-area" id="file-drop-area">
+                  <i class="file-drop-icon" data-lucide="folder-open"></i>
+                  <p class="file-drop-message">
+                    <span>Click to choose images</span> or drag them here
+                  </p>
+                  <!-- Standard multiple files input which can also accept multiple image files -->
+                  <input class="file-input-hidden" type="file" id="image-folder" multiple accept="image/*" required>
+                </div>
+                <!-- Selection summary status -->
+                <div class="selected-files-summary" id="files-summary-text">No images selected</div>
+              </div>
+
+              <!-- Multi-file Upload Progress Indicator -->
+              <div class="progress-container" id="upload-progress-container">
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" id="upload-progress-fill"></div>
+                </div>
+                <div class="progress-text">
+                  <span id="upload-progress-text">Uploading file 1 of 5 (0%)...</span>
+                  <span id="upload-progress-percentage">0%</span>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <button class="btn" type="submit" id="upload-submit-btn" style="margin-top: 1rem;">
+                <i data-lucide="upload-cloud" style="width: 16px; height: 16px; margin-right: 0.5rem; display: inline-block; vertical-align: middle;"></i>
+                Upload Series
+              </button>
+
+            </form>
+          </div>
+        </section>
+
+        <!-- COLUMN B: LISTING & DELETION -->
+        <section>
+          <h2 class="admin-panel-title">Existing Exhibitions</h2>
+          
+          <!-- Delete Alert Feedback -->
+          <div class="alert alert-danger" id="delete-error" style="display: none;">Error deleting exhibition.</div>
+          <div class="alert alert-success" id="delete-success" style="display: none;">Exhibition successfully deleted.</div>
+
+          <div class="shows-list" id="admin-shows-list">
+            <!-- Dynamically populated rows of shows -->
+            <div class="empty-state">
+              <p>Loading active exhibitions...</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; Muhammad Zeeshan 2026. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <!-- Vanilla Javascript Admin Module -->
+  <script type="module" src="/js/admin.js"></script>
+</body>
+</html>

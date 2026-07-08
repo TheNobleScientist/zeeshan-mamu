@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONTACT | MUHAMMAD ZEESHAN</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Load Lucide Icons CDN for vanilla JS -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Main Container -->
+  <div class="container">
+    
+    <!-- Editorial Header -->
+    <header>
+      <div class="header-inner">
+        <div class="header-left">
+          <h1 class="site-title"><a href="/" class="site-title-link">Muhammad Zeeshan</a></h1>
+          <span class="site-subtitle">Exhibitions &amp; Projects</span>
+          
+          <!-- Navigation Links -->
+          <nav class="site-nav">
+            <a href="/" class="nav-link">Exhibitions</a>
+            <a href="/contact.html" class="nav-link active">Contact Us</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contact Page Content Area -->
+    <main class="contact-main">
+      <div class="contact-grid">
+        
+        <!-- Left: Contact Form -->
+        <div class="contact-card">
+          <h2 class="contact-section-title">Send a Message</h2>
+          <p class="contact-section-desc">For inquiries regarding exhibitions, acquisitions, or catalog requests, please complete the form below. Messages are delivered directly to the studio.</p>
+          
+          <div id="contact-success-state" style="display: none;" class="success-message-box">
+            <div class="success-icon-wrapper">
+              <i data-lucide="check-circle" style="width: 48px; height: 48px; color: var(--success);"></i>
+            </div>
+            <h3>Message Sent</h3>
+            <p>Thank you for your inquiry. Muhammad Zeeshan's studio team will review your message and get back to you as soon as possible.</p>
+            <button id="reset-contact-btn" class="btn secondary-btn" style="margin-top: 1.5rem; width: auto;">Send Another Message</button>
+          </div>
+
+          <form id="contact-form">
+            <div class="form-group">
+              <label class="form-label" for="contact-name">Full Name</label>
+              <input class="form-control" type="text" id="contact-name" placeholder="Zeeshan Ahmed" required>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="contact-email">Email Address</label>
+              <input class="form-control" type="email" id="contact-email" placeholder="zeeshan@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="contact-subject">Subject</label>
+              <input class="form-control" type="text" id="contact-subject" placeholder="Exhibition or Acquisition Inquiry" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="contact-message">Message</label>
+              <textarea class="form-control" id="contact-message" rows="6" placeholder="Write your message here..." style="resize: vertical; font-family: inherit;" required></textarea>
+            </div>
+
+            <div id="contact-error" class="error-banner" style="display: none; margin-bottom: 1.5rem;"></div>
+
+            <button type="submit" id="contact-submit-btn" class="btn text-center" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%;">
+              <i data-lucide="send" style="width: 16px; height: 16px;"></i> Send Message
+            </button>
+          </form>
+        </div>
+
+        <!-- Right: Studio Info -->
+        <div class="studio-info-column">
+          <div class="studio-info-card">
+            <h3 class="studio-card-title">Studio &amp; Teaching</h3>
+            
+            <div class="studio-info-item">
+              <div class="studio-info-icon">
+                <i data-lucide="map-pin" style="width: 18px; height: 18px; color: var(--text-primary);"></i>
+              </div>
+              <div>
+                <h4>Current Location</h4>
+                <p>Karachi, Pakistan</p>
+              </div>
+            </div>
+
+            <div class="studio-info-item">
+              <div class="studio-info-icon">
+                <i data-lucide="graduation-cap" style="width: 18px; height: 18px; color: var(--text-primary);"></i>
+              </div>
+              <div>
+                <h4>Academic Appointment</h4>
+                <p>School of Visual &amp; Performing Arts<br>Arts Council &middot; Karachi, Pakistan</p>
+              </div>
+            </div>
+
+            <div class="studio-info-item">
+              <div class="studio-info-icon">
+                <i data-lucide="mail" style="width: 18px; height: 18px; color: var(--text-primary);"></i>
+              </div>
+              <div>
+                <h4>General Inquiries</h4>
+                <p><a href="mailto:info@muhammadzeeshan.art" class="studio-link">info@muhammadzeeshan.art</a></p>
+              </div>
+            </div>
+          </div>
+
+         
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; Muhammad Zeeshan 2026. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <!-- Vanilla Javascript Contact Application Module -->
+  <script type="module" src="/js/contact.js"></script>
+</body>
+</html>

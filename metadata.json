@@ -1,0 +1,6 @@
+{
+  "name": "Artist Portfolio",
+  "description": "A static, fast-loading, minimalist artist portfolio website with a secure admin CMS for uploading exhibitions, powered by Firebase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

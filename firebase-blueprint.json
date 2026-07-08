@@ -1,0 +1,54 @@
+{
+  "entities": {
+    "show": {
+      "title": "Exhibition Show",
+      "description": "An exhibition series or show representing a group of artist artworks.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title or series name of the show."
+        },
+        "year": {
+          "type": "integer",
+          "description": "The year of the show."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["solo", "group"],
+          "description": "Whether it is a solo show or group show."
+        },
+        "coverUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "The cover image URL of the series."
+        },
+        "images": {
+          "type": "array",
+          "description": "All images in the series.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": { "type": "string", "format": "uri" },
+              "path": { "type": "string" },
+              "name": { "type": "string" }
+            },
+            "required": ["url", "path", "name"]
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        }
+      },
+      "required": ["title", "year", "type", "coverUrl", "images", "createdAt"]
+    }
+  },
+  "firestore": {
+    "shows/{showId}": {
+      "schema": "show",
+      "description": "Exhibition shows containing details, cover image, and list of images stored in Firebase Storage."
+    }
+  }
+}
