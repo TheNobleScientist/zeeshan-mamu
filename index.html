@@ -3,7 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ARTIST PORTFOLIO</title>
+  
+  <!-- SEO Meta Tags -->
+  <title>Muhammad Zeeshan | Official Artist Portfolio</title>
+  <meta name="description" content="Explore the official contemporary art portfolio and solo exhibitions of celebrated Pakistani miniature artist Muhammad Zeeshan. NCA alumni, visual artist, curator, and creator of 'The Dying Miniature' series.">
+  <meta name="keywords" content="Muhammad Zeeshan, Muhammad Zeeshan artist, Pakistani contemporary artist, Miniature painting specialist, Contemporary Miniature, Visual artist Muhammad Zeeshan, Muhammad Zeeshan art portfolio, Contemporary South Asian art, Muhammad Zeeshan artworks and exhibitions, National College of Arts, NCA alumni, Multimedia artist Pakistan, Muhammad Zeeshan curatorial practice, The Dying Miniature Muhammad Zeeshan">
+  <meta name="author" content="Muhammad Zeeshan">
+  <link rel="canonical" href="https://muhammadzeeshan.art/">
+  
+  <!-- Structured Data / JSON-LD Schema for Rich Snippets -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Muhammad Zeeshan",
+    "birthPlace": {
+      "@type": "Place",
+      "name": "Mirpurkhas, Pakistan"
+    },
+    "birthDate": "1980",
+    "jobTitle": "Contemporary Artist & Curator",
+    "alumniOf": {
+      "@type": "EducationalOrganization",
+      "name": "National College of Arts, Lahore"
+    },
+    "knowsAbout": ["Miniature painting", "Contemporary Miniature", "Contemporary South Asian art", "Visual Art"],
+    "url": "https://muhammadzeeshan.art/",
+    "sameAs": [
+      "https://www.instagram.com/muhammadzeeshan80/",
+      "https://kristinhjellegjerde.com/artists/92-muhammad-zeeshan/overview/",
+      "https://www.artnet.com/artists/muhammad-zeeshan/",
+      "https://www.mutualart.com/Artist/Muhammad-Zeeshan/A553BE102145A583",
+      "https://www.saffronart.com/artists/muhammad-zeeshan"
+    ]
+  }
+  </script>
+  
+  <!-- Open Graph / Facebook Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://muhammadzeeshan.art/">
+  <meta property="og:title" content="Muhammad Zeeshan | Contemporary Artist Portfolio">
+  <meta property="og:description" content="Official website and curated exhibitions of Pakistani visual artist Muhammad Zeeshan. Showcasing contemporary works, history of miniature painting, and exhibition details.">
+  <meta property="og:image" content="https://pub-d13bf540ee3045a392647f8e648281d4.r2.dev/shows/2026/site-og-preview.jpg">
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Muhammad Zeeshan | Contemporary Artist Portfolio">
+  <meta name="twitter:description" content="Official website and curated exhibitions of Pakistani visual artist Muhammad Zeeshan. Showcasing contemporary works, history of miniature painting, and exhibition details.">
+  <meta name="twitter:image" content="https://pub-d13bf540ee3045a392647f8e648281d4.r2.dev/shows/2026/site-og-preview.jpg">
+
+  <!-- Performance & Faster Loading Hints -->
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
+  <link rel="dns-prefetch" href="https://unpkg.com">
+  <link rel="dns-prefetch" href="https://pub-d13bf540ee3045a392647f8e648281d4.r2.dev">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="preconnect" href="https://pub-d13bf540ee3045a392647f8e648281d4.r2.dev" crossorigin>
+
   <link rel="stylesheet" href="/css/style.css">
   <!-- Load Lucide Icons CDN for vanilla JS -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -34,17 +90,30 @@
       <!-- Top Section: Artist Biography -->
       <aside class="portfolio-sidebar-column">
         <div class="bio-container">
-          <p class="bio-text">
-            <strong>Muhammad Zeeshan</strong> (b. 1980, Mirpurkhas, Pakistan) received his BFA in Miniature Painting from the National College of Arts, Lahore in 2003. Zeeshan lives and works in Karachi and is currently teaching at School of Visual &amp; Performing Arts Arts Council &middot; Karachi Pakistan. Zeeshan's artistic direction is heavily influenced by the medium in which he works; however, the motifs he explores are closely tied to the cultural heritage of Pakistan, investigating issues of culture and conflict, asking the viewer to reconsider social norms and the lens through which we perceive others.
+          <p class="bio-text" style="text-align: justify;">
+            <strong>Muhammad Zeeshan</strong> (b. 1980, Mirpurkhas, Pakistan) received his BFA in Miniature Painting from the National College of Arts, Lahore in 2003. Zeeshan lives and works in Karachi and is currently teaching at the School of Visual &amp; Performing Arts, Arts Council &middot; Karachi, Pakistan. Zeeshan's artistic direction is heavily influenced by the medium in which he works; however, the motifs he explores are closely tied to the cultural heritage of Pakistan, investigating issues of culture and conflict, asking the viewer to reconsider social norms and the lens through which we perceive others.
           </p>
         </div>
       </aside>
 
       <!-- Bottom Section: Exhibitions & Shows -->
-      <div id="portfolio-root" class="portfolio-shows-column">
-        <!-- Loading State -->
-        <div class="empty-state" id="loading-state">
-          <p>Loading portfolio exhibitions...</p>
+      <div class="portfolio-shows-column">
+        <!-- Search & Filter Controls -->
+        <div class="portfolio-controls reveal" id="portfolio-controls" style="display: none;">
+          <div class="search-wrapper">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="search-input" class="search-input" placeholder="Search exhibitions by title, year, or type..." aria-label="Search exhibitions">
+            <button type="button" id="clear-search-btn" class="clear-search-btn" aria-label="Clear search" style="display: none;">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="portfolio-root">
+          <!-- Loading State -->
+          <div class="empty-state" id="loading-state">
+            <p>Loading portfolio exhibitions...</p>
+          </div>
         </div>
       </div>
     </main>

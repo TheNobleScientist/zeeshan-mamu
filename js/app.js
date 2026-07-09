@@ -1,15 +1,20 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy, doc, getDocFromServer } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, getDocs, query, orderBy, doc, getDocFromServer } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
-// Initialize Firebase App
+// Initialize Firebase App with Fast Offline Caching
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager()
+  })
+}, firebaseConfig.firestoreDatabaseId);
 
 // Global State
 let activeShow = null;
 let activeImages = [];
 let currentImageIndex = 0;
+let allShows = [];
 
 /* ==========================================================================
    MANDATORY FIRESTORE CONNECTION TEST
@@ -45,62 +50,21 @@ async function loadPortfolio() {
       return;
     }
 
-    // 2. Clear loading state
-    root.innerHTML = "";
-
-    // 3. Group by year automatically in JS memory
-    const groupedShows = {};
+    // 2. Populate allShows in-memory
+    allShows = [];
     querySnapshot.forEach((docSnap) => {
-      const showData = { id: docSnap.id, ...docSnap.data() };
-      const year = showData.year;
-      if (!groupedShows[year]) {
-        groupedShows[year] = [];
-      }
-      groupedShows[year].push(showData);
+      allShows.push({ id: docSnap.id, ...docSnap.data() });
     });
 
-    // 4. Render Grouped Year Sections
-    const sortedYears = Object.keys(groupedShows).sort((a, b) => b - a);
-    
-    sortedYears.forEach((year) => {
-      const section = document.createElement("section");
-      section.className = "year-section";
-      
-      section.innerHTML = `
-        <h2 class="year-title">${year}</h2>
-        <div class="shows-grid" id="grid-${year}"></div>
-      `;
-      
-      root.appendChild(section);
-      
-      const grid = document.getElementById(`grid-${year}`);
-      
-      groupedShows[year].forEach((show) => {
-        const card = document.createElement("button");
-        card.className = "show-card reveal";
-        card.type = "button";
-        card.setAttribute("aria-label", `View exhibition ${show.title}`);
-        
-        card.innerHTML = `
-          <div class="image-container">
-            <img class="show-cover" src="${show.coverUrl}" alt="Cover photo of ${show.title}" loading="lazy" referrerPolicy="no-referrer">
-          </div>
-          <div class="show-meta">
-            <span class="badge">${show.type} Show</span>
-            <span class="show-year-label">${show.year}</span>
-          </div>
-          <h3 class="show-title">${show.title}</h3>
-        `;
-        
-        // Setup clicking trigger for the Lightbox
-        card.addEventListener("click", () => openLightbox(show));
-        
-        grid.appendChild(card);
-      });
-    });
+    // 3. Make Search Controls Visible
+    const controls = document.getElementById("portfolio-controls");
+    if (controls) {
+      controls.style.display = "block";
+      controls.classList.add("visible");
+    }
 
-    // 5. Setup Scroll Reveal Animations via Intersection Observer
-    setupScrollReveals();
+    // 4. Render Initial List
+    renderShows(allShows);
 
   } catch (error) {
     console.error("Error loading portfolio: ", error);
@@ -110,6 +74,143 @@ async function loadPortfolio() {
       </div>
     `;
   }
+}
+
+/* ==========================================================================
+   SHOWS RENDERING ENGINE
+   ========================================================================== */
+function renderShows(showsList) {
+  const root = document.getElementById("portfolio-root");
+  root.innerHTML = "";
+
+  if (showsList.length === 0) {
+    root.innerHTML = `
+      <div class="no-results">
+        <h3>No exhibitions found</h3>
+        <p>Try refining your search by entering a different title or year.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // 1. Group by year automatically in JS memory
+  const groupedShows = {};
+  showsList.forEach((show) => {
+    const year = show.year;
+    if (!groupedShows[year]) {
+      groupedShows[year] = [];
+    }
+    groupedShows[year].push(show);
+  });
+
+  // 2. Render Year Navigation Bar (if there are multiple years)
+  const sortedYears = Object.keys(groupedShows).sort((a, b) => b - a);
+  
+  if (sortedYears.length > 1) {
+    const yearNav = document.createElement("div");
+    yearNav.className = "year-nav-bar reveal visible";
+    yearNav.innerHTML = `
+      <span class="year-nav-label">Years</span>
+      <div class="year-nav-links">
+        ${sortedYears.map((year, index) => `
+          <button type="button" class="year-nav-btn ${index === 0 ? 'active' : ''}" data-year="${year}">
+            ${year}
+          </button>
+        `).join("")}
+      </div>
+    `;
+    root.appendChild(yearNav);
+
+    // Attach smooth scroll handler
+    yearNav.querySelectorAll(".year-nav-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const selectedYear = e.currentTarget.getAttribute("data-year");
+        const targetSection = document.getElementById(`section-${selectedYear}`);
+        if (targetSection) {
+          yearNav.querySelectorAll(".year-nav-btn").forEach(b => b.classList.remove("active"));
+          e.currentTarget.classList.add("active");
+          
+          targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+    });
+  }
+
+  // 3. Render Grouped Year Sections
+  sortedYears.forEach((year) => {
+    const section = document.createElement("section");
+    section.className = "year-section";
+    section.id = `section-${year}`;
+    
+    section.innerHTML = `
+      <h2 class="year-title">${year}</h2>
+      <div class="shows-grid" id="grid-${year}"></div>
+    `;
+    
+    root.appendChild(section);
+    
+    const grid = document.getElementById(`grid-${year}`);
+    
+    groupedShows[year].forEach((show) => {
+      const card = document.createElement("button");
+      card.className = "show-card reveal visible";
+      card.type = "button";
+      card.setAttribute("aria-label", `View exhibition ${show.title}`);
+      
+      card.innerHTML = `
+        <div class="image-container">
+          <img class="show-cover" src="${show.coverUrl}" alt="Cover photo of ${show.title}" loading="lazy" referrerPolicy="no-referrer">
+        </div>
+        <div class="show-meta">
+          <span class="badge">${show.type} Show</span>
+          <span class="show-year-label">${show.year}</span>
+        </div>
+        <h3 class="show-title">${show.title}</h3>
+      `;
+      
+      // Setup clicking trigger for the Lightbox
+      card.addEventListener("click", () => openLightbox(show));
+      
+      grid.appendChild(card);
+    });
+  });
+
+  // 4. Setup Active Year Intersection Observer for automated scroll highlighting
+  if (sortedYears.length > 1) {
+    const navButtons = document.querySelectorAll(".year-nav-btn");
+    const sectionObserverOptions = {
+      root: null,
+      rootMargin: "-20% 0px -60% 0px",
+      threshold: 0
+    };
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const activeId = entry.target.id;
+          const activeYear = activeId.replace("section-", "");
+          
+          navButtons.forEach((btn) => {
+            if (btn.getAttribute("data-year") === activeYear) {
+              btn.classList.add("active");
+            } else {
+              btn.classList.remove("active");
+            }
+          });
+        }
+      });
+    }, sectionObserverOptions);
+
+    sortedYears.forEach((year) => {
+      const sect = document.getElementById(`section-${year}`);
+      if (sect) {
+        sectionObserver.observe(sect);
+      }
+    });
+  }
+
+  // 5. Setup Scroll Reveal Animations via Intersection Observer
+  setupScrollReveals();
 }
 
 /* ==========================================================================
@@ -245,5 +346,39 @@ document.addEventListener("DOMContentLoaded", () => {
   // 5. Load Lucide Icons for our elements
   if (window.lucide) {
     window.lucide.createIcons();
+  }
+
+  // 6. Client-Side Real-Time Exhibition Search & Filter
+  const searchInput = document.getElementById("search-input");
+  const clearSearchBtn = document.getElementById("clear-search-btn");
+
+  if (searchInput && clearSearchBtn) {
+    searchInput.addEventListener("input", (e) => {
+      const queryText = e.target.value.toLowerCase().trim();
+      
+      // Toggle clear search button visibility
+      if (queryText.length > 0) {
+        clearSearchBtn.style.display = "flex";
+      } else {
+        clearSearchBtn.style.display = "none";
+      }
+
+      // Filter shows by title, year, or type (Solo/Group)
+      const filtered = allShows.filter(show => {
+        const titleMatch = show.title && show.title.toLowerCase().includes(queryText);
+        const yearMatch = show.year && String(show.year).toLowerCase().includes(queryText);
+        const typeMatch = show.type && show.type.toLowerCase().includes(queryText);
+        return titleMatch || yearMatch || typeMatch;
+      });
+
+      renderShows(filtered);
+    });
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      clearSearchBtn.style.display = "none";
+      searchInput.focus();
+      renderShows(allShows);
+    });
   }
 });

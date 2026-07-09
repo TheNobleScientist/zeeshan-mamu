@@ -2,5 +2,6 @@ services:
   - type: web
     name: muhammad-zeeshan-portfolio
     env: static
+    rootDir: .
     buildCommand: npm install && npm run build
     publishPath: dist

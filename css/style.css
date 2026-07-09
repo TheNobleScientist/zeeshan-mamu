@@ -860,6 +860,141 @@ footer {
   text-align: justify;
 }
 
+/* Year Navigation Bar */
+.year-nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 2.5rem;
+}
+
+.year-nav-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+}
+
+.year-nav-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.year-nav-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-speed) var(--transition-ease);
+}
+
+.year-nav-btn:hover {
+  color: var(--text-primary);
+}
+
+.year-nav-btn.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent);
+}
+
+/* Search Controls */
+.portfolio-controls {
+  margin-bottom: 2.5rem;
+  width: 100%;
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-muted);
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.85rem 1rem 0.85rem 2.75rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  transition: all var(--transition-speed) var(--transition-ease);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background-color: var(--bg-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-speed) var(--transition-ease);
+}
+
+.clear-search-btn:hover {
+  color: var(--text-primary);
+}
+
+.clear-search-btn i {
+  width: 16px;
+  height: 16px;
+}
+
+/* No Results State */
+.no-results {
+  text-align: center;
+  padding: 5rem 2rem;
+  color: var(--text-muted);
+}
+
+.no-results h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.no-results p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
 /* ==========================================================================
    CONTACT US PAGE STYLES
    ========================================================================== */
@@ -1042,4 +1177,167 @@ footer {
     transform: translateY(0);
   }
 }
+
+/* Bio Grid and Press Section */
+.bio-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 900px) {
+  .bio-grid {
+    grid-template-columns: 1.2fr 1.8fr;
+  }
+}
+
+.press-container {
+  background-color: var(--bg-card);
+  padding: 2rem;
+  border-left: 2px solid var(--accent);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+}
+
+.press-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-bottom: 0.5rem;
+}
+
+.press-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  .press-list {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.press-list li a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--transition-speed) var(--transition-ease);
+}
+
+.press-list li a:hover {
+  transform: translateX(4px);
+}
+
+.press-list li strong {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  display: inline-block;
+}
+
+.press-link-domain {
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  background-color: var(--bg-input);
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  margin-left: 0.5rem;
+}
+
+.press-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+.social-links-row {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.social-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background-color: var(--bg-color);
+  transition: all var(--transition-speed) var(--transition-ease);
+}
+
+.social-btn:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+}
+
+.social-btn i, .social-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Floating Instagram Link in Bottom Right Corner */
+.floating-instagram-link {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 999;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--bg-card);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 0.6rem 1.1rem;
+  border-radius: 50px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all var(--transition-speed) var(--transition-ease);
+}
+
+.floating-instagram-link:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.floating-instagram-link i,
+.floating-instagram-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 600px) {
+  .floating-instagram-link {
+    bottom: 1.25rem;
+    right: 1.25rem;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.75rem;
+  }
+}
+
 

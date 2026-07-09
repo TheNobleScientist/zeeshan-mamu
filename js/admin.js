@@ -1,12 +1,19 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, orderBy, serverTimestamp, getDocFromServer } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, addDoc, getDocs, doc, deleteDoc, query, orderBy, serverTimestamp, getDocFromServer, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 
-// Initialize Firebase App
+// Initialize Firebase App with Fast Offline Caching
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager()
+  })
+}, firebaseConfig.firestoreDatabaseId);
+
+const auth = getAuth(app);
 
 // Global list of active exhibitions to manage UI state
 let existingExhibitions = [];
@@ -34,15 +41,19 @@ async function testConnection() {
 }
 
 function handleFirestoreError(error, operationType, path) {
+  const currentUser = auth.currentUser;
   const errInfo = {
     error: error instanceof Error ? error.message : String(error),
-    authInfo: {
-      userId: "bypassed_local_admin",
-      email: "zeeshan",
-      emailVerified: true,
-      isAnonymous: false,
-      tenantId: null,
-      providerInfo: []
+    authInfo: currentUser ? {
+      userId: currentUser.uid,
+      email: currentUser.email,
+      emailVerified: currentUser.emailVerified,
+      isAnonymous: currentUser.isAnonymous,
+      tenantId: currentUser.tenantId,
+      providerInfo: currentUser.providerData
+    } : {
+      userId: "guest_or_unauthenticated",
+      email: "none"
     },
     operationType,
     path
@@ -52,19 +63,19 @@ function handleFirestoreError(error, operationType, path) {
 }
 
 /* ==========================================================================
-   SECURE LOCAL AUTHENTICATION
+   FIREBASE AUTHENTICATION
    ========================================================================== */
 const loginContainer = document.getElementById("login-container");
 const adminPanel = document.getElementById("admin-panel");
 const adminEmailDisplay = document.getElementById("admin-user-email");
 const loginError = document.getElementById("login-error");
 
-function checkAuthSession() {
-  const isAuth = localStorage.getItem("zee_admin_authenticated") === "true";
-  if (isAuth) {
+// Listen for Firebase Auth State Changes
+onAuthStateChanged(auth, (user) => {
+  if (user) {
     loginContainer.style.display = "none";
     adminPanel.style.display = "block";
-    adminEmailDisplay.textContent = "zeeshan";
+    adminEmailDisplay.textContent = user.email;
     loadAdminShows(); // load existing lists
   } else {
     loginContainer.style.display = "block";
@@ -74,31 +85,72 @@ function checkAuthSession() {
   if (window.lucide) {
     window.lucide.createIcons();
   }
-}
-
-// Check session on page load
-checkAuthSession();
+});
 
 /* ==========================================================================
-   SIGN IN TRIGGER
+   SIGN IN TRIGGER (With Email / Username Lookup)
    ========================================================================== */
 const loginForm = document.getElementById("login-form");
 const loginSubmitBtn = document.getElementById("login-submit-btn");
 
-loginForm.addEventListener("submit", (e) => {
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   loginError.style.display = "none";
   loginSubmitBtn.disabled = true;
   loginSubmitBtn.textContent = "Signing In...";
 
-  const username = document.getElementById("login-username").value.trim();
+  const usernameInput = document.getElementById("login-username").value.trim();
   const password = document.getElementById("login-password").value;
 
-  if (username === "zeeshan" && password === "aambal") {
-    localStorage.setItem("zee_admin_authenticated", "true");
-    checkAuthSession();
-  } else {
-    loginError.textContent = "Invalid username or password. Please try again.";
+  try {
+    let email = usernameInput;
+
+    // If it doesn't contain "@", it's a username. Lookup the corresponding email.
+    if (!usernameInput.includes("@")) {
+      let foundEmail = null;
+      try {
+        // 1. Check "users" collection
+        const usersRef = collection(db, "users");
+        const qUsers = query(usersRef, where("username", "==", usernameInput));
+        const usersSnapshot = await getDocs(qUsers);
+        
+        if (!usersSnapshot.empty) {
+          foundEmail = usersSnapshot.docs[0].data().email;
+        } else {
+          // 2. Check "admins" collection
+          const adminsRef = collection(db, "admins");
+          const qAdmins = query(adminsRef, where("username", "==", usernameInput));
+          const adminsSnapshot = await getDocs(qAdmins);
+          
+          if (!adminsSnapshot.empty) {
+            foundEmail = adminsSnapshot.docs[0].data().email;
+          }
+        }
+      } catch (dbErr) {
+        console.warn("Firestore lookup error for username:", dbErr);
+      }
+
+      if (foundEmail) {
+        email = foundEmail;
+      } else {
+        // Fallback for default zeeshan user if no matching db record exists
+        if (usernameInput.toLowerCase() === "zeeshan") {
+          email = "muhammadzainb@gmail.com";
+        } else {
+          throw new Error(`Username "${usernameInput}" not found. Please sign in using your registered email.`);
+        }
+      }
+    }
+
+    // Sign in using Firebase Authentication
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (err) {
+    console.error("Login Failed: ", err);
+    let friendlyMessage = err.message || "Invalid credentials. Please try again.";
+    if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
+      friendlyMessage = "Incorrect email/username or password. Please try again.";
+    }
+    loginError.textContent = friendlyMessage;
     loginError.style.display = "block";
     loginSubmitBtn.disabled = false;
     loginSubmitBtn.textContent = "Sign In";
@@ -108,13 +160,16 @@ loginForm.addEventListener("submit", (e) => {
 /* ==========================================================================
    LOG OUT TRIGGER
    ========================================================================== */
-document.getElementById("logout-btn").addEventListener("click", () => {
-  localStorage.removeItem("zee_admin_authenticated");
-  loginForm.reset();
-  loginError.style.display = "none";
-  loginSubmitBtn.disabled = false;
-  loginSubmitBtn.textContent = "Sign In";
-  checkAuthSession();
+document.getElementById("logout-btn").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+    loginForm.reset();
+    loginError.style.display = "none";
+    loginSubmitBtn.disabled = false;
+    loginSubmitBtn.textContent = "Sign In";
+  } catch (err) {
+    console.error("Logout error: ", err);
+  }
 });
 
 /* ==========================================================================
